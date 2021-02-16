@@ -72,29 +72,59 @@ public class Main {
             int maxk = 0;
             LinearNNSearch maxd = null;
             SelectedTag maxw = null;
-
-
+            int index = 0;
+            int maxindex = 0;
             //Prozesaketa
             for (int k = 1; k <= data.numInstances(); k++) {
                 ibk.setKNN(k);
                 for (LinearNNSearch d : distances) {
+                    if(index==distances.length){
+                        index = 0;
+                    }
                     ibk.setNearestNeighbourSearchAlgorithm(d);
                     for (SelectedTag w : tags) {
                         eval = new Evaluation(data);
                         ibk.setDistanceWeighting(w);
                         eval.crossValidateModel(ibk, data, 10, new Random(1));
                         Double fmeasure = eval.fMeasure(0);
-                        System.out.println("k = " + k + " distantzia = " + d + " eta pisua = " + w);
+                        System.out.println("k = " + k + " distantzia = " + printeatudistantzia(index) + " eta pisua = " + w);
                         if (maxf < fmeasure) {
                             maxf = fmeasure;
                             maxk = k;
                             maxd = d;
                             maxw = w;
+                            maxindex = index;
                         }
                     }
+                    index ++;
                 }
             }
-            System.out.println("EMAITZAK: k-ren balio optimoa = " + maxk + " da, " + maxd + " distantziarekin eta " + maxw + " pisuarekin non fmeasure = " + maxf + " den.");
+            System.out.println("EMAITZAK: k-ren balio optimoa = " + maxk + " da, " + printeatudistantzia(maxindex)+ " distantziarekin eta " + maxw + " pisuarekin non fmeasure = " + maxf + " den.");
         }
+    }
+
+    private static String printeatudistantzia(int i) {
+        String emaitza ="";
+        switch (i){
+            case 0:
+                emaitza = "Manhattan Distance";
+                break;
+            case 1:
+                emaitza = "Euclidean Distance";
+                break;
+            case 2:
+                emaitza = "Chevishev Distance";
+                break;
+            case 3:
+                emaitza = "Filtered Distance";
+                break;
+            case 4:
+                emaitza = "Minkowski Distance";
+                break;
+            default:
+                emaitza = "Manhattan Distance";
+                break;
+        }
+        return emaitza;
     }
 }
